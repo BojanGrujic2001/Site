@@ -1,0 +1,213 @@
+/* Scoped to navmenu component (Blazor CSS isolation) */
+
+/* Wrapper */
+.nav-wrapper {
+    position: relative;
+    z-index: 1050;
+}
+
+/* Top navbar (mobile) */
+.navbar {
+    height: 64px;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.35)) !important;
+    z-index: 1060;
+    display: flex;
+}
+
+/* Hide the brand text on very small screens if needed */
+.navbar .navbar-brand {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+/* Hamburger */
+.navbar-toggler {
+    color: #fff;
+    border: none;
+    background: transparent;
+}
+
+/* SIDEBAR (hidden left by default on small screens) */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;         /* hidden */
+    width: 260px;
+    height: 100%;
+    background: linear-gradient(180deg, #fffaf0 0%, #f5f5f5 45%); /* wheat -> light */
+    box-shadow: 8px 0 30px rgba(12, 12, 12, 0.18);
+    transition: left 0.28s cubic-bezier(.2,.9,.3,1), box-shadow 0.2s ease;
+    z-index: 1070;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* When open on small screens */
+.sidebar.open {
+    left: 0;
+}
+
+/* Sidebar inner padding + column layout */
+.sidebar-inner {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 18px;
+}
+
+/* Brand row */
+.brand-row {
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Brand mark + text */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #111;
+    font-weight: 700;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* Big menu: list + links */
+.menu {
+    margin-top: 8px;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #222;
+    padding: 14px 10px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    transition: transform 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+/* Icon circle */
+.menu-link .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    box-shadow: 0 2px 6px rgba(16,16,16,0.04);
+    font-size: 1.25rem;
+    color: #111;
+}
+
+/* Label */
+.menu-link .label {
+    flex: 1;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover/active */
+.menu-link:hover {
+    transform: translateX(4px);
+    background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+    box-shadow: 0 4px 18px rgba(10,10,10,0.04);
+    color: #000;
+}
+
+.menu-link.active,
+.menu-link.active:hover {
+    background: #111;
+    color: #fff;
+}
+
+.menu-link.active .icon,
+.menu-link.active:hover .icon {
+    background: #fff;
+    color: #111;
+}
+
+/* Small helper link in footer */
+.sidebar-footer {
+    border-top: 1px solid rgba(0,0,0,0.04);
+    padding-top: 14px;
+    font-size: 0.95rem;
+}
+
+.small-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    text-decoration: none;
+}
+
+/* Overlay to block content when menu open on small screens */
+.nav-overlay {
+    display: none;
+}
+
+.nav-overlay.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1065;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.18s ease;
+}
+
+/* Desktop: pin the sidebar and hide the top navbar */
+@media (min-width: 992px) {
+    .navbar {
+        display: none !important; /* force hide on desktop */
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .sidebar {
+        left: 0;
+        position: fixed;
+        width: 260px;
+        box-shadow: none;
+        border-right: 1px solid rgba(0,0,0,0.04);
+        background: linear-gradient(180deg, #fffaf0 0%, #f6f6f6 50%);
+    }
+
+    .nav-overlay {
+        display: none !important;
+    }
+}
+
+/* Accessibility focus */
+.menu-link:focus {
+    outline: 3px solid rgba(13,110,253,0.18);
+    outline-offset: 2px;
+}
+
+/* Icon color (if you prefer brand color for icons) */
+.menu-link .bi {
+    font-size: 1.15rem;
+}

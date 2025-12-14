@@ -1,0 +1,169 @@
+@page "/linq_tools"
+@using System.Collections.Generic
+
+<PageTitle>LINQ Performance Testing</PageTitle>
+
+<div class="container-fluid py-4 px-5 bg-light min-vh-100">
+    <h3 class="fw-bold mb-2">LINQ Performance Testing</h3>
+    <p class="text-muted small mb-4">
+        This is a page where you can build your own C# object and test LINQ performance on it.<br />
+        (Performance numbers may be skewed by WASM overhead — treat as rough estimates.)
+    </p>
+
+    <!-- File Tabs -->
+    <div class="d-flex align-items-center">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">MyClass1.cs</a>
+            </li>
+        </ul>
+        <button class="btn btn-outline-secondary btn-sm ms-2" @onclick="AddClass">
+            <i class="bi bi-plus-lg"></i>
+        </button>
+    </div>
+
+    <!-- Object Builder Table -->
+    <div class="bg-white rounded shadow-sm p-4 mb-3">
+        <div class="row fw-bold border-bottom pb-2 mb-2">
+            <div class="col-2">Type</div>
+            <div class="col-3">Name</div>
+            <div class="col-3">Value</div>
+            <div class="col-4 text-end">Actions</div>
+        </div>
+
+        @foreach (var prop in Properties)
+        {
+            <div class="row align-items-center mb-2">
+                <div class="col-2">
+                    <select class="form-select form-select-sm" @bind="prop.Type">
+                        @foreach (var type in Enum.GetValues<DataType>())
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-3">
+                    <input class="form-control form-control-sm" @bind="prop.Name" placeholder="Id" />
+                </div>
+                <div class="col-3">
+                    <input class="form-control form-control-sm" @bind="prop.Value" placeholder="1" />
+                </div>
+                <div class="col-4 text-end">
+                    <button class="btn btn-outline-primary btn-sm me-2" @onclick="() => Save(prop)">
+                        <i class="bi bi-pencil-square"></i> Save
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" @onclick="() => Delete(prop)">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        }
+
+        <div class="text-start mt-3">
+            <button class="btn btn-success btn-sm" @onclick="AddProperty">
+                <i class="bi bi-plus-circle"></i> Add Property
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <input type="number" class="form-control w-auto" @bind="Amount" min="1" placeholder="Amount" />
+        </div>
+    </div>
+
+    <!-- LINQ Expression + Amount + Test -->
+    <div class="mb-3">
+        <label class="form-label fw-bold">LINQ Expression</label>
+        <input class="form-control mb-2" @bind="LinqExpression" placeholder="Enter LINQ query..." />
+
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <button class="btn btn-success" @onclick="Test">
+                Test
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="bg-white rounded shadow-sm p-4">
+        <h5 class="fw-bold mb-3">Results</h5>
+
+        @if (Results == null)
+        {
+            <p class="text-muted">No test results yet. Enter an expression and click Test.</p>
+        }
+        else
+        {
+            <div>
+                <p><strong>Expression:</strong> @Results.Expression</p>
+                <p><strong>Objects:</strong> @Results.Amount</p>
+                <p><strong>Execution Time:</strong> @Results.ExecutionTime ms</p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string LinqExpression { get; set; } = string.Empty;
+    private int Amount { get; set; } = 10; // must be >1
+
+    private List<LinqProperty> Properties = new()
+    {
+        new LinqProperty { Type = DataType.Int, Name = "Id", Value = "1" }
+    };
+
+    private LinqDynamic dynamicObject = new LinqDynamic();
+
+    private LinqResult? Results { get; set; }
+
+    private void AddProperty() => Properties.Add(new LinqProperty { Type = DataType.String });
+
+    private void Delete(LinqProperty prop)
+    {
+        Properties.Remove(prop);
+        dynamicObject.RemoveProperty(prop.Name);
+    } 
+
+    private void Edit(LinqProperty prop)
+    {
+        Console.WriteLine($"Editing {prop.Name}");
+    }
+
+    private void Save(LinqProperty prop)
+    {
+        dynamicObject.AddProperty(prop.Name, prop.Value);
+        Console.WriteLine(prop.Type.ToSystemType());
+    }
+
+    private void AddClass()
+    {
+        //TODO: implement adding another class
+        Console.WriteLine("Add file clicked");
+    }
+
+    private void Test()
+    {
+        if (Amount < 1)
+        {
+            Results = new LinqResult
+            {
+                Expression = LinqExpression,
+                Amount = Amount,
+                ExecutionTime = -1
+            };
+            return;
+        }
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        // Simulated work
+        System.Threading.Thread.Sleep(20);
+        stopwatch.Stop();
+
+        Results = new LinqResult
+        {
+            Expression = LinqExpression,
+            Amount = Amount,
+            ExecutionTime = stopwatch.ElapsedMilliseconds
+        };
+    }
+}

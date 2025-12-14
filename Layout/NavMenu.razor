@@ -1,0 +1,66 @@
+﻿<div class="nav-wrapper">
+    <!-- Top bar (hamburger + brand). Visible only on small screens. -->
+    <nav class="navbar navbar-dark bg-transparent fixed-top px-3 d-flex justify-content-between align-items-center">
+        <a class="navbar-brand fw-bold" href="/">BojanGrujic</a>
+        <button class="navbar-toggler border-0" type="button" @onclick="ToggleMenu" aria-label="Toggle navigation" aria-expanded="@isMenuOpen">
+            <i class="bi bi-list fs-3"></i>
+        </button>
+    </nav>
+
+    <!-- Sliding sidebar menu -->
+    <aside class="sidebar @NavMenuCssClass" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-inner d-flex flex-column">
+            <div class="brand-row d-flex align-items-center justify-content-between">
+                <a class="brand" href="/">
+                    <span class="brand-mark">BG</span>
+                    <span class="brand-text">Bojan Grujic</span>
+                </a>
+
+                <button class="btn-close ms-auto d-md-none" @onclick="ToggleMenu" aria-label="Close"></button>
+            </div>
+
+            <nav class="menu mt-4" aria-label="Primary">
+                <ul class="list-unstyled mb-0">
+                    <li>
+                        <NavLink href="" class="menu-link" Match="NavLinkMatch.All">
+                            <span class="icon"><i class="bi bi-house-door"></i></span>
+                            <span class="label">Home</span>
+                        </NavLink>
+                    </li>
+
+                    <li>
+                        <NavLink href="portfolio" class="menu-link">
+                            <span class="icon"><i class="bi bi-person-workspace"></i></span>
+                            <span class="label">Portfolio</span>
+                        </NavLink>
+                    </li>
+
+                    <li>
+                        <NavLink href="linq_tools" class="menu-link">
+                            <span class="icon"><i class="bi bi-person-workspace"></i></span>
+                            <span class="label">Linq testing</span>
+                        </NavLink>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer mt-auto pb-4">
+                <a class="small-link" href="/settings"><i class="bi bi-gear me-2"></i> Settings</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- overlay (visible only when sidebar is open on small screens) -->
+    <div class="nav-overlay @NavMenuCssClass" @onclick="ToggleMenu" aria-hidden="@(!isMenuOpen)"></div>
+</div>
+
+@code {
+    private bool isMenuOpen = false;
+
+    private string? NavMenuCssClass => isMenuOpen ? "open" : "";
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}

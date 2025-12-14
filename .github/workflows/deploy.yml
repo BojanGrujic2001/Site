@@ -1,0 +1,36 @@
+name: Deploy Blazor WASM to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Publish Blazor WebAssembly
+        run: dotnet publish -c Release -o build
+
+      - name: Deploy to GitHub Pages branch
+        run: |
+          cd build/wwwroot
+          touch .nojekyll  # disable Jekyll on Pages
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Deploy Blazor WASM to GitHub Pages"
+          git branch -M gh-pages
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
