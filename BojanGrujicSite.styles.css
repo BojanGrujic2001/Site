@@ -1,0 +1,368 @@
+/* /Layout/MainLayout.razor.rz.scp.css */
+/* Layout shell + responsive spacing */
+
+.page[b-8h9rgm3mjx] {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #ffffff;
+    color: #111;
+}
+
+main[b-8h9rgm3mjx] {
+    flex: 1;
+    transition: margin-left 0.25s ease;
+}
+
+/* Keep old top-row styles (adjusted) */
+.top-row[b-8h9rgm3mjx] {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.top-row[b-8h9rgm3mjx]  a, .top-row[b-8h9rgm3mjx]  .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
+
+.top-row[b-8h9rgm3mjx]  a:hover, .top-row[b-8h9rgm3mjx]  .btn-link:hover {
+    text-decoration: underline;
+}
+
+/* Ensure content isn't hidden under the fixed top navbar on small screens */
+@media (max-width: 991.98px) {
+    article.content[b-8h9rgm3mjx] {
+        padding-top: 72px; /* height of the fixed-top navbar (64) + small buffer */
+    }
+
+    .top-row[b-8h9rgm3mjx] {
+        justify-content: space-between;
+    }
+
+    .top-row[b-8h9rgm3mjx]  a, .top-row[b-8h9rgm3mjx]  .btn-link {
+        margin-left: 0;
+    }
+}
+
+/* Desktop: reserve space for the pinned left menu */
+@media (min-width: 992px) {
+    .page[b-8h9rgm3mjx] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-8h9rgm3mjx] {
+        width: 260px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-8h9rgm3mjx] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row[b-8h9rgm3mjx], article[b-8h9rgm3mjx] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+
+    /* remove any extra top padding when on desktop */
+    article.content[b-8h9rgm3mjx] {
+        padding-top: 0;
+    }
+}
+/* /Layout/NavMenu.razor.rz.scp.css */
+/* Scoped to navmenu component (Blazor CSS isolation) */
+
+/* Wrapper */
+.nav-wrapper[b-m0wuuvom0o] {
+    position: relative;
+    z-index: 1050;
+}
+
+/* Top navbar (mobile) */
+.navbar[b-m0wuuvom0o] {
+    height: 64px;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.35)) !important;
+    z-index: 1060;
+    display: flex;
+}
+
+/* Hide the brand text on very small screens if needed */
+.navbar .navbar-brand[b-m0wuuvom0o] {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+/* Hamburger */
+.navbar-toggler[b-m0wuuvom0o] {
+    color: #fff;
+    border: none;
+    background: transparent;
+}
+
+/* SIDEBAR (hidden left by default on small screens) */
+.sidebar[b-m0wuuvom0o] {
+    position: fixed;
+    top: 0;
+    left: -280px;         /* hidden */
+    width: 260px;
+    height: 100%;
+    background: linear-gradient(180deg, #fffaf0 0%, #f5f5f5 45%); /* wheat -> light */
+    box-shadow: 8px 0 30px rgba(12, 12, 12, 0.18);
+    transition: left 0.28s cubic-bezier(.2,.9,.3,1), box-shadow 0.2s ease;
+    z-index: 1070;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* When open on small screens */
+.sidebar.open[b-m0wuuvom0o] {
+    left: 0;
+}
+
+/* Sidebar inner padding + column layout */
+.sidebar-inner[b-m0wuuvom0o] {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 18px;
+}
+
+/* Brand row */
+.brand-row[b-m0wuuvom0o] {
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+/* Brand mark + text */
+.brand[b-m0wuuvom0o] {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #111;
+    font-weight: 700;
+}
+
+.brand-mark[b-m0wuuvom0o] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* Big menu: list + links */
+.menu[b-m0wuuvom0o] {
+    margin-top: 8px;
+}
+
+.menu-link[b-m0wuuvom0o] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #222;
+    padding: 14px 10px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    transition: transform 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+/* Icon circle */
+.menu-link .icon[b-m0wuuvom0o] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #f0f0f0;
+    box-shadow: 0 2px 6px rgba(16,16,16,0.04);
+    font-size: 1.25rem;
+    color: #111;
+}
+
+/* Label */
+.menu-link .label[b-m0wuuvom0o] {
+    flex: 1;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hover/active */
+.menu-link:hover[b-m0wuuvom0o] {
+    transform: translateX(4px);
+    background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+    box-shadow: 0 4px 18px rgba(10,10,10,0.04);
+    color: #000;
+}
+
+.menu-link.active[b-m0wuuvom0o],
+.menu-link.active:hover[b-m0wuuvom0o] {
+    background: #111;
+    color: #fff;
+}
+
+.menu-link.active .icon[b-m0wuuvom0o],
+.menu-link.active:hover .icon[b-m0wuuvom0o] {
+    background: #fff;
+    color: #111;
+}
+
+/* Small helper link in footer */
+.sidebar-footer[b-m0wuuvom0o] {
+    border-top: 1px solid rgba(0,0,0,0.04);
+    padding-top: 14px;
+    font-size: 0.95rem;
+}
+
+.small-link[b-m0wuuvom0o] {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    text-decoration: none;
+}
+
+/* Overlay to block content when menu open on small screens */
+.nav-overlay[b-m0wuuvom0o] {
+    display: none;
+}
+
+.nav-overlay.open[b-m0wuuvom0o] {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1065;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.18s ease;
+}
+
+/* Desktop: pin the sidebar and hide the top navbar */
+@media (min-width: 992px) {
+    .navbar[b-m0wuuvom0o] {
+        display: none !important; /* force hide on desktop */
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .sidebar[b-m0wuuvom0o] {
+        left: 0;
+        position: fixed;
+        width: 260px;
+        box-shadow: none;
+        border-right: 1px solid rgba(0,0,0,0.04);
+        background: linear-gradient(180deg, #fffaf0 0%, #f6f6f6 50%);
+    }
+
+    .nav-overlay[b-m0wuuvom0o] {
+        display: none !important;
+    }
+}
+
+/* Accessibility focus */
+.menu-link:focus[b-m0wuuvom0o] {
+    outline: 3px solid rgba(13,110,253,0.18);
+    outline-offset: 2px;
+}
+
+/* Icon color (if you prefer brand color for icons) */
+.menu-link .bi[b-m0wuuvom0o] {
+    font-size: 1.15rem;
+}
+/* /Pages/Home.razor.rz.scp.css */
+/* /Pages/Linq_tools.razor.rz.scp.css */
+/* /Pages/Portfolio.razor.rz.scp.css */
+.intro[b-kic7jn8bct] {
+    min-height: 100vh;
+    padding: 6rem 2rem;
+    background-color: #f8f9fa;
+}
+
+.intro .greeting[b-kic7jn8bct] {
+    color: #0d6efd;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.intro h1[b-kic7jn8bct] {
+    color: #212529;
+}
+
+.intro h2[b-kic7jn8bct] {
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+.content-section[b-kic7jn8bct] {
+    padding: 5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section-title[b-kic7jn8bct] {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.timeline-item[b-kic7jn8bct] {
+    margin-bottom: 2rem;
+}
+
+.skill[b-kic7jn8bct] {
+    display: inline-block;
+    background-color: #e9ecef;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+
+.skill:hover[b-kic7jn8bct] {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+footer[b-kic7jn8bct] {
+    background-color: #fff;
+}
+
+@media (max-width: 768px) {
+    .intro[b-kic7jn8bct] {
+        padding: 4rem 1.5rem;
+    }
+    .intro h1[b-kic7jn8bct] {
+        font-size: 2.2rem;
+    }
+    .intro h2[b-kic7jn8bct] {
+        font-size: 1.2rem;
+    }
+}
