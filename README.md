@@ -21,15 +21,13 @@ It’s fast, fully client-side, and built to evolve as I publish new apps.
 | UI / Styling | Bootstrap 5 |
 | State Management | Built-in Blazor features + local storage |
 | Hosting | GitHub Pages |
-| Tooling | VS Code |
 
 ---
 
 ## Set up
 1. Clone the repo.
 2. Make sure you have .NET 9.0 SDK installed
-3. Change the wwwroot/index.html from  "base href="/MySite/"" to base href="/"", the former is used for deployment and will be fixed at later date.
-4. Run dotnet run.
-5. Profit???
+3. Change the wwwroot/index.html from  "base href="/Site/"" to base href="/"", the former is used for github pages deployment and will be fixed once i get custom domain.
+4. Run with "dotnet run".
 
 ---
