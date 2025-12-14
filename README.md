@@ -28,7 +28,7 @@ It’s fast, fully client-side, and built to evolve as I publish new apps.
 ## Set up
 1. Clone the repo.
 2. Make sure you have .NET 9.0 SDK installed
-3. Change the wwwroot/index.html from  "<base href="/MySite/" />" to <base href="/" />", the former is used for deployment and will be fixed at later date.
+3. Change the wwwroot/index.html from  "base href="/MySite/"" to base href="/"", the former is used for deployment and will be fixed at later date.
 4. Run dotnet run.
 5. Profit???
 
