@@ -4,24 +4,28 @@ namespace BojanGrujicSite.Models
 {
     public class LinqDynamic : DynamicObject
     {
-        Dictionary<string,object> _dictionary = new Dictionary<string,object>();
+        private readonly Dictionary<string, object> _dictionary = new();
 
         public object this[string propertyName]
         {
-            get { return _dictionary[propertyName]; }
-            set { AddProperty(propertyName, value); }
+            get => _dictionary[propertyName];
+            set => AddProperty(propertyName, value);
         }
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public IReadOnlyDictionary<string, object> Properties => _dictionary;
+
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
         {
             return _dictionary.TryGetValue(binder.Name, out result);
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object? value)
         {
-            AddProperty(binder.Name, value);
+            AddProperty(binder.Name, value!);
             return true;
         }
+
+        public override IEnumerable<string> GetDynamicMemberNames() => _dictionary.Keys;
 
         public void AddProperty(string name, object value)
         {
