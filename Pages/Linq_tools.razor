@@ -1,5 +1,6 @@
 @page "/linq_tools"
 @using System.Collections.Generic
+@inject IJSRuntime JS
 
 <PageTitle>LINQ Performance Testing</PageTitle>
 
@@ -74,8 +75,25 @@
 
     <!-- LINQ Expression + Amount + Test -->
     <div class="mb-3">
-        <label class="form-label fw-bold">LINQ Expression</label>
-        <input class="form-control mb-2" @bind="LinqExpression" placeholder="Enter LINQ query..." />
+        <label class="form-label fw-bold">
+            LINQ Expression
+            <span class="d-inline-block ms-1" tabindex="0"
+                  data-bs-toggle="tooltip" data-bs-html="true"
+                  title="&lt;b&gt;Example queries:&lt;/b&gt;&lt;br&gt;
+                         &lt;code&gt;.Where(Id &amp;gt; 500)&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Where(Id &amp;gt; 100 &amp;amp;&amp;amp; Id &amp;lt; 900)&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.OrderBy(Id).Take(10)&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Where(Name.Contains(&amp;quot;ab&amp;quot;))&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Select(Id, Name)&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Where(Id &amp;gt; 50).OrderByDescending(Id).Take(5)&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Count()&lt;/code&gt;&lt;br&gt;
+                         &lt;code&gt;.Skip(10).Take(5)&lt;/code&gt;&lt;br&gt;
+                         &lt;b&gt;Operators:&lt;/b&gt; ==, !=, &amp;gt;, &amp;lt;, &amp;gt;=, &amp;lt;=, &amp;amp;&amp;amp;, ||&lt;br&gt;
+                         &lt;b&gt;Methods:&lt;/b&gt; Where, OrderBy, OrderByDescending, Select, Take, Skip, Count, First, Any, Distinct, Reverse">
+                <i class="bi bi-question-circle text-primary" style="cursor: help;"></i>
+            </span>
+        </label>
+        <input class="form-control mb-2" @bind="LinqExpression" placeholder=".Where(Id > 500).OrderBy(Id).Take(10)" />
 
         <div class="d-flex align-items-center gap-2 mb-3">
             <button class="btn btn-success" @onclick="Test">
@@ -92,37 +110,125 @@
         {
             <p class="text-muted">No test results yet. Enter an expression and click Test.</p>
         }
+        else if (!string.IsNullOrEmpty(Results.Error))
+        {
+            <div class="alert alert-danger">
+                <strong>Error:</strong> @Results.Error
+            </div>
+        }
         else
         {
-            <div>
-                <p><strong>Expression:</strong> @Results.Expression</p>
-                <p><strong>Objects:</strong> @Results.Amount</p>
-                <p><strong>Execution Time:</strong> @Results.ExecutionTime ms</p>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-2">
+                            <h6 class="card-title fw-bold mb-2">Query Info</h6>
+                            <p class="mb-1"><strong>Expression:</strong> <code>@Results.Expression</code></p>
+                            <p class="mb-1"><strong>Generated Objects:</strong> @Results.Amount.ToString("N0")</p>
+                            <p class="mb-0"><strong>Result Count:</strong> @Results.ResultCount.ToString("N0")</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-2">
+                            <h6 class="card-title fw-bold mb-2">Performance</h6>
+                            <p class="mb-1"><strong>Data Generation:</strong> @Results.DataGenerationTime ms</p>
+                            <p class="mb-1"><strong>Query Execution:</strong> @Results.ExecutionTime ms <span class="text-muted small">(@Results.ExecutionTimeMicroseconds µs)</span></p>
+                            <p class="mb-0"><strong>Total:</strong> @(Results.DataGenerationTime + Results.ExecutionTime) ms</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-2 text-center">
+                            <small class="text-muted">Throughput</small>
+                            <p class="mb-0 fw-bold">@Results.ItemsPerMs.ToString("N1") items/ms</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-2 text-center">
+                            <small class="text-muted">Filter Rate</small>
+                            <p class="mb-0 fw-bold">@Results.FilterPercentage%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-2 text-center">
+                            <small class="text-muted">Memory Used</small>
+                            <p class="mb-0 fw-bold">@FormatBytes(Results.MemoryUsed)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Results.ResultData.Count > 0)
+            {
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                @foreach (var col in Results.ResultData[0].Keys)
+                                {
+                                    <th>@col</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Results.ResultData.Count && i < MaxDisplayRows; i++)
+                            {
+                                var row = Results.ResultData[i];
+                                <tr>
+                                    <td>@(i + 1)</td>
+                                    @foreach (var val in row.Values)
+                                    {
+                                        <td>@FormatValue(val)</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Results.ResultData.Count > MaxDisplayRows)
+                {
+                    <p class="text-muted small">Showing first @MaxDisplayRows of @Results.ResultData.Count results.</p>
+                }
+            }
         }
     </div>
 </div>
 
 @code {
     private string LinqExpression { get; set; } = string.Empty;
-    private int Amount { get; set; } = 10; // must be >1
+    private int Amount { get; set; } = 10;
+    private const int MaxDisplayRows = 200;
+    private bool _tooltipsInitialized;
 
     private List<LinqProperty> Properties = new()
     {
         new LinqProperty { Type = DataType.Int, Name = "Id", Value = "1" }
     };
 
-    private LinqDynamic dynamicObject = new LinqDynamic();
-
     private LinqResult? Results { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_tooltipsInitialized)
+        {
+            await JS.InvokeVoidAsync("initTooltips");
+            _tooltipsInitialized = true;
+        }
+    }
 
     private void AddProperty() => Properties.Add(new LinqProperty { Type = DataType.String });
 
-    private void Delete(LinqProperty prop)
-    {
-        Properties.Remove(prop);
-        dynamicObject.RemoveProperty(prop.Name);
-    } 
+    private void Delete(LinqProperty prop) => Properties.Remove(prop);
 
     private void Edit(LinqProperty prop)
     {
@@ -131,13 +237,11 @@
 
     private void Save(LinqProperty prop)
     {
-        dynamicObject.AddProperty(prop.Name, prop.Value);
-        Console.WriteLine(prop.Type.ToSystemType());
+        Console.WriteLine($"Saved {prop.Name} ({prop.Type})");
     }
 
     private void AddClass()
     {
-        //TODO: implement adding another class
         Console.WriteLine("Add file clicked");
     }
 
@@ -149,21 +253,55 @@
             {
                 Expression = LinqExpression,
                 Amount = Amount,
-                ExecutionTime = -1
+                Error = "Amount must be at least 1."
             };
             return;
         }
 
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-        // Simulated work
-        System.Threading.Thread.Sleep(20);
-        stopwatch.Stop();
-
-        Results = new LinqResult
+        if (string.IsNullOrWhiteSpace(LinqExpression))
         {
-            Expression = LinqExpression,
-            Amount = Amount,
-            ExecutionTime = stopwatch.ElapsedMilliseconds
-        };
+            Results = new LinqResult
+            {
+                Expression = "(empty)",
+                Amount = Amount,
+                Error = "Please enter a LINQ expression. Example: .Where(it[\"Age\"] > 30)"
+            };
+            return;
+        }
+
+        // Validate all properties have names
+        var validProps = Properties.Where(p => !string.IsNullOrWhiteSpace(p.Name)).ToList();
+        if (validProps.Count == 0)
+        {
+            Results = new LinqResult
+            {
+                Expression = LinqExpression,
+                Amount = Amount,
+                Error = "Define at least one property with a name."
+            };
+            return;
+        }
+
+        var genSw = System.Diagnostics.Stopwatch.StartNew();
+        var items = DataGenerator.GenerateItems(validProps, Amount);
+        genSw.Stop();
+
+        Results = LinqExecutor.Execute(items, LinqExpression, validProps);
+        Results.DataGenerationTime = genSw.ElapsedMilliseconds;
+    }
+
+    private string FormatValue(object? val)
+    {
+        if (val == null) return "null";
+        if (val is DateTime dt) return dt.ToString("yyyy-MM-dd HH:mm");
+        return val.ToString() ?? "null";
+    }
+
+    private static string FormatBytes(long bytes)
+    {
+        if (bytes < 0) return "N/A";
+        if (bytes < 1024) return $"{bytes} B";
+        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        return $"{bytes / (1024.0 * 1024.0):F2} MB";
     }
 }
